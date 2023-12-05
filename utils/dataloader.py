@@ -37,10 +37,12 @@ class ThreeSeasonDataset(Dataset):
 
         filled = np.array(filled)
         filled = np.expand_dims(filled, axis=0)
+        filled[filled > 0] = 1
         filled = filled.astype(np.float32)
 
         border = np.array(border)
         border = np.expand_dims(border, axis=0)
+        border[border > 0] = 1
         border = border.astype(np.float32)
 
         sample = {'image': image, 'filled': filled, 'border': border}
@@ -50,9 +52,10 @@ class ThreeSeasonDataset(Dataset):
 
 
 if __name__ == '__main__':
-    dataset = ThreeSeasonDataset(root_dir='data/france/sentinel/')
+    dataset = ThreeSeasonDataset(root_dir='data/data/sentinel/')
     dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
     for i_batch, sample_batched in enumerate(dataloader):
         print(i_batch, sample_batched['image'].size(), sample_batched['filled'].size(), sample_batched['border'].size())
         if i_batch == 3:
+            print(sample_batched['filled'])
             break

@@ -25,13 +25,16 @@ class UNetResNet50_9(nn.Module):
             classes=num_classes,
             activation=None
         )
+        self.activation = nn.Sigmoid()
 
     def forward(self, x):
         x = self.conv2d(x)
         x = self.relu(x)
         x1 = self.unet_filled(x)
         x2 = self.unet_border(x)
-        return torch.cat((x1, x2), dim=1)
+        x1 = self.activation(x1)
+        x2 = self.activation(x2)
+        return x1, x2
     
 
 class UNetResNet50_3(nn.Module):

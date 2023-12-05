@@ -6,10 +6,13 @@ from models.unet_models import UNetResNet50_9, UNetResNet50_3
 from torch.utils.tensorboard import SummaryWriter
 from utils.dataloader import ThreeSeasonDataset
 from torch.utils.data import DataLoader
+from tqdm import tqdm
 
+log_dir = f'logs'
+writer = SummaryWriter(log_dir)
 
 # Define Hyperparameters
-num_epochs = 10
+num_epochs = 100
 batch_size = 64
 learning_rate = 0.0001
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -25,7 +28,7 @@ criterion = nn.BCEWithLogitsLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
 # Load data
-dataset = ThreeSeasonDataset(root_dir='data/france/sentinel/')
+dataset = ThreeSeasonDataset(root_dir='data/data/sentinel/')
 
 # split the dataset into train and test and validation
 train_size = int(0.8 * len(dataset))
@@ -42,13 +45,10 @@ train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True
 val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
 test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 
-# Create Tensorboard writer
-writer = SummaryWriter('logs')
-
 # Train model
 total_step = len(train_dataloader)
 
-for epoch in range(num_epochs):
+for epoch in tqdm(range(num_epochs)):
     model.train()
     epoch_loss = 0
     for i_batch, sample_batched in enumerate(train_dataloader):
@@ -70,7 +70,7 @@ for epoch in range(num_epochs):
 
         # Print loss
         if (i_batch + 1) % 10 == 0:
-            print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'.format(epoch + 1, num_epochs, i_batch + 1, total_step, loss.item()))
+            tqdm.write('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'.format(epoch + 1, num_epochs, i_batch + 1, total_step, loss.item()))
 
         # Log loss
         writer.add_scalar('Loss/train', loss.item(), epoch * total_step + i_batch)
@@ -92,17 +92,19 @@ for epoch in range(num_epochs):
             loss = filled_loss + border_loss
             total_val_loss += loss.item()
 
+        print('Epoch [{}/{}], Val Loss: {:.4f}'.format(epoch + 1, num_epochs, total_val_loss / len(val_dataloader)))
         # Log loss
         writer.add_scalar('Loss/val', total_val_loss / len(val_dataloader), epoch)
+        
 
     # Save the best model
     if epoch == 0:
         best_loss = total_val_loss
-        torch.save(model.state_dict(), 'checkpoints/UNetResNet50_9.pt')
+        torch.save(model.state_dict(), 'logs/UNetResNet50_9.pt')
     else:
         if total_val_loss < best_loss:
             best_loss = total_val_loss
-            torch.save(model.state_dict(), 'checkpoints/UNetResNet50_9.pt')
+            torch.save(model.state_dict(), 'logs/UNetResNet50_9.pt')
 
 # Test model
 model.eval()

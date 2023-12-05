@@ -9,7 +9,7 @@ from PIL import Image
 
 parser = argparse.ArgumentParser(description='Inference script for the UNetResNet50_X model.')
 parser.add_argument('--model', type=str, default='3', help='Number of season\'s images to use (1 or 3)')
-parser.add_argument('--model_path', type=str, default='checkpoints/UNetResNet50_9.pt', help='Path to model weights')
+parser.add_argument('--model_path', type=str, default='logs/UNetResNet50_9.pt', help='Path to model weights')
 parser.add_argument('--input_path', type=str, default='test_data/', help='Path to input images')
 
 args = parser.parse_args()
@@ -46,9 +46,9 @@ input_tensor = torch.from_numpy(images).float().unsqueeze(0)
 # Perform inference
 model.eval()
 with torch.no_grad():
-    output = model(input_tensor)
-    output = torch.sigmoid(output)
-    output = output.squeeze(0).squeeze(0).numpy()
+    output1, output2 = model(input_tensor)
+    output1 = output1.squeeze(0).squeeze(0).numpy()
+    output2 = output2.squeeze(0).squeeze(0).numpy()
 
 # Plot results
 # plt.imshow(output)
@@ -56,3 +56,6 @@ with torch.no_grad():
 
 
 
+# Save results
+plt.imsave('test_data/output1.png', output1, cmap='gray')
+plt.imsave('test_data/output2.png', output2, cmap='gray')
