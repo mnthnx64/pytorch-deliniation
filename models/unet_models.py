@@ -31,7 +31,7 @@ class UNetResNet50_9(nn.Module):
         x = self.relu(x)
         x1 = self.unet_filled(x)
         x2 = self.unet_border(x)
-        return torch.cat((x1, x2), dim=1)
+        return x1, x2
     
 
 class UNetResNet50_3(nn.Module):
