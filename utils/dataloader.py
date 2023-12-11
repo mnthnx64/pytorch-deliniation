@@ -7,9 +7,9 @@ class ThreeSeasonDataset(Dataset):
     def __init__(self, root_dir, transform=None):
         self.root_dir = root_dir
         self.transform = transform
-        self.images1 = sorted(os.listdir(os.path.join(root_dir, 'sentinel_images_mar')))
-        self.images2 = sorted(os.listdir(os.path.join(root_dir, 'sentinel_images_jun')))
-        self.images3 = sorted(os.listdir(os.path.join(root_dir, 'sentinel_images_sep')))
+        self.images1 = sorted(os.listdir(os.path.join(root_dir, 'images_mar')))
+        self.images2 = sorted(os.listdir(os.path.join(root_dir, 'images_jun')))
+        self.images3 = sorted(os.listdir(os.path.join(root_dir, 'images_sep')))
         self.masks_filled = sorted(os.listdir(os.path.join(root_dir, 'masks_filled')))
         self.masks_border = sorted(os.listdir(os.path.join(root_dir, 'masks')))
         self.masks_filled.sort()
@@ -18,9 +18,9 @@ class ThreeSeasonDataset(Dataset):
         return len(self.masks_filled)
 
     def __getitem__(self, idx):
-        img_name1 = os.path.join(self.root_dir, 'sentinel_images_mar', self.images1[idx])
-        img_name2 = os.path.join(self.root_dir, 'sentinel_images_jun', self.images2[idx])
-        img_name3 = os.path.join(self.root_dir, 'sentinel_images_sep', self.images3[idx])
+        img_name1 = os.path.join(self.root_dir, 'images_mar', self.images1[idx])
+        img_name2 = os.path.join(self.root_dir, 'images_jun', self.images2[idx])
+        img_name3 = os.path.join(self.root_dir, 'images_sep', self.images3[idx])
         masks_filled = os.path.join(self.root_dir, 'masks_filled', self.masks_filled[idx])
         masks_border = os.path.join(self.root_dir, 'masks', self.masks_border[idx])
         image1 = Image.open(img_name1)

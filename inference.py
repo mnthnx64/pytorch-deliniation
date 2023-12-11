@@ -26,7 +26,7 @@ try:
     model.load_state_dict(torch.load(args.model_path))
 except FileNotFoundError:
     print('Model not found. Please check the path to the model weights.')
-    # exit(1)
+    exit(1)
 
 # Load input images
 images = np.array([])
