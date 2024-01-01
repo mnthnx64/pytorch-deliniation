@@ -23,11 +23,11 @@ class ThreeSeasonDataset(Dataset):
         img_name3 = os.path.join(self.root_dir, 'images_sep', self.images3[idx])
         masks_filled = os.path.join(self.root_dir, 'masks_filled', self.masks_filled[idx])
         masks_border = os.path.join(self.root_dir, 'masks', self.masks_border[idx])
-        image1 = Image.open(img_name1)
-        image2 = Image.open(img_name2)
-        image3 = Image.open(img_name3)
-        filled = Image.open(masks_filled)
-        border = Image.open(masks_border)
+        image1 = np.array(Image.open(img_name1))
+        image2 = np.array(Image.open(img_name2))
+        image3 = np.array(Image.open(img_name3))
+        filled = np.array(Image.open(masks_filled))
+        border = np.array(Image.open(masks_border))
 
         image = np.concatenate((image1, image2, image3), axis=2)
         

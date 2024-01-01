@@ -7,18 +7,33 @@ from torch.utils.tensorboard import SummaryWriter
 from utils.dataloader import ThreeSeasonDataset
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+import yaml
+import argparse
+
+parser = argparse.ArgumentParser(description='Train script for the UNetResNet50_X model.')
+parser.add_argument('--config', '-c', type=str, default='configs/config.yaml', help='Path to the config file.')
+
+args = parser.parse_args()
+
+# Load config file
+with open(args.config) as f:
+    config = yaml.load(f, Loader=yaml.FullLoader)
+
 
 log_dir = f'logs'
 writer = SummaryWriter(log_dir)
 
+# Hyperparameters
 # Define Hyperparameters
-num_epochs = 100
-batch_size = 64
-learning_rate = 0.0001
+num_epochs = config['training']['num_epochs']
+batch_size = config['training']['batch_size']
+learning_rate = config['training']['learning_rate']
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Define model
-model = UNetResNet50_9()
+model_name = config['model']['name']
+save_name = config['model']['save_name']
+model = globals()[model_name]()
 model.to(device)
 
 # Define loss function
@@ -28,7 +43,7 @@ criterion = nn.BCEWithLogitsLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
 # Load data
-dataset = ThreeSeasonDataset(root_dir='data/data/sentinel/')
+dataset = globals()[config['data']['dataset']](root_dir=config['data']['train_path'])
 
 # split the dataset into train and test and validation
 train_size = int(0.8 * len(dataset))
@@ -100,11 +115,11 @@ for epoch in tqdm(range(num_epochs)):
     # Save the best model
     if epoch == 0:
         best_loss = total_val_loss
-        torch.save(model.state_dict(), 'logs/UNetResNet50_9.pt')
+        torch.save(model.state_dict(), f'logs/{save_name}.pt')
     else:
         if total_val_loss < best_loss:
             best_loss = total_val_loss
-            torch.save(model.state_dict(), 'logs/UNetResNet50_9.pt')
+            torch.save(model.state_dict(), f'logs/{save_name}.pt')
 
 # Test model
 model.eval()
