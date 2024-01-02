@@ -19,6 +19,7 @@ conda env create -f environment.yml
 Use the links below to download the data for each region. Some contain only the labels while others contain the images as well
 - [Labels for Rwanda](https://beta.source.coop/nasa/rwanda-field-boundary-competition/)
 - [Labels for Kenya](https://beta.source.coop/radiantearth/african-crops-kenya-01/)
+- [Labels for France](https://www.data.gouv.fr/fr/datasets/registre-parcellaire-graphique-rpg-contours-des-parcelles-et-ilots-culturaux-et-leur-groupe-de-cultures-majoritaire/)
 - [Data for France](https://sustainlab-group.github.io/sustainbench/docs/datasets/sdg2/field_delineation.html)
 <!-- - [Data for South Africa]() -->
 
